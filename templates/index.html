@@ -2,18 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Model Comparison</title>
 </head>
 <body>
-    <form action="/predict" enctype="multipart/form-data" method="post">
-        <p>
-            <input type="file" name="imagem" id="imagem">
-        </p>
-        
-        <p>
-            <button type="submit">Enviar</button>
-        </p>
+    <h1>Model Comparison</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <h2>Faça o upload de uma imagem para a análise e comparação dos modelos</h2>
+        <input type="file" name="file" required>
+        <button type="submit">Upload and Compare</button>
     </form>
+
+    <div id="results">
+        <h2>Resultados: </h2>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/upload_and_compare', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            document.getElementById('results').innerHTML = `
+                <h2>Model Comparison Results</h2>
+                <p><strong>CNN LeNet Model:</strong></p>
+                <p>Prediction: ${data.predict_normal}</p>
+                <p>Inference Time: ${data.predict_normal_time.toFixed(4)}s</p>
+                <p><strong>Linear Model:</strong></p>
+                <p>Prediction: ${data.predict_linear}</p>
+                <p>Inference Time: ${data.predict_linear_time.toFixed(4)}s</p>
+            `;
+        };
+    </script>
 </body>
 </html>
